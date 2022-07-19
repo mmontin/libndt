@@ -21,9 +21,13 @@ open import Function public
   using
     (_∘_ ; id ; const ; constᵣ ; flip ; _|>_ ; case_of_ ; _∘₂_ ; ∣_⟩-_)
 
+open import Data.Unit public
+  using
+    (⊤ ; tt)
+
 open import Data.Product public
   using
-    (_,_ ; ∃ ; _×_ ; proj₁ ; proj₂)
+    (Σ-syntax ; _,_ ; ∃ ; _×_ ; proj₁ ; proj₂)
 
 open import Data.Sum public
   using
@@ -41,7 +45,11 @@ open import Relation.Unary public
     
 open import Agda.Primitive public
   using
-    (Setω)
+    (Setω ; lsuc ; _⊔_)
+
+open import Level public
+  using
+    (Lift ; lift)
 
 open import Relation.Binary public
   using

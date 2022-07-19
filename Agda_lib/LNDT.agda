@@ -1,13 +1,25 @@
 module LNDT where
 
 open import Dependencies.Imports
+open import GNDT
 open import SpreadAble
 
 -- The specification for linked lndt data types
 
-data LNDT {a} (F : TT) (A : Set a) : Set a where
-  [] : LNDT F A
-  _∷_ : A → LNDT F (F A) → LNDT F A
+Σ-LNDT : ∀ {a} → Sig a
+Σ-LNDT = `⊤ `⊎ (`A `× `X)
+
+LNDT : ∀ {a} (F : TT)(A : Set a) → Set a
+LNDT F A = GNDT Σ-LNDT F A
+
+nil : ∀ {a} {F : TT}{A : Set a} → LNDT F A
+nil = ctor (inj₁ (lift tt))
+
+cons : ∀ {a} {F : TT}{A : Set a} → A → LNDT F (F A) → LNDT F A
+cons a xs = ctor (inj₂ (a , xs))
+
+pattern [] = ctor (inj₁ (lift tt))
+pattern _∷_ a xs = ctor (inj₂ (a , xs))
 
 infixr 3 _∷_
 
@@ -19,8 +31,8 @@ lndt-ind : ∀
   (P[] : ∀ {a} {A : Set a} → P {A = A} [])
   (f   : ∀ {a} {A : Set a} (x : A) {l} → P l → P (x ∷ l))
   {a} {A : Set a} (x : LNDT F A) → P x
-lndt-ind     _ P[] _ []      = P[]
-lndt-ind {F} P P[] f (x ∷ e) = f x (lndt-ind {F} P P[] f e)
+lndt-ind {F} P P[] f x = gndt-ind {Σ = Σ-LNDT} P (λ { (inj₁ (lift tt)) (lift tt) → P[]
+                                                    ; (inj₂ (a , x)) (lift tt , px) → f a px }) x
 
 -- The depth of an instance of LNDT
 depth : ∀ {a} {F : TT} {A : Set a} → LNDT F A → ℕ
