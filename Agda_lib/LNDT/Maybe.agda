@@ -13,7 +13,7 @@ Maybe = LNDT Null
 pattern nothing = []
 pattern just a = a ∷ []
 
-maybe-complete : ∀ {a} {A : Set a} → (x : Maybe A) → x ≡ nothing ⊎ ∃ λ v → x ≡ just v
+maybe-complete : ∀ {A : Set} → (x : Maybe A) → x ≡ nothing ⊎ ∃ λ v → x ≡ just v
 maybe-complete nothing = inj₁ refl
 maybe-complete (just x) = inj₂ (x , refl)
 

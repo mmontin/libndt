@@ -4,15 +4,12 @@ module Null where
 
 open import SpreadAble
 open import Dependencies.Imports
-
--- A leveled empty type
-
-data ⊥ₐ {a} : Set a where
+open import Data.Empty
 
 -- The Null type constructor
 
 Null : TT
-Null _ = ⊥ₐ
+Null _ = ⊥
 
 -- Null is spread-able
 

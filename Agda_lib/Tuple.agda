@@ -69,21 +69,21 @@ tuple-spread-able n = ⟨
   A⟨ tuple-any n , tuple-dec-any n , tuple-all n , tuple-dec-all n ⟩ ,
   E⟨ tuple-dec-eq n ⟩ ⟩
 
-tuple-size : ∀ {a} {A : Set a} {n} → Tuple n A → ℕ
+tuple-size : ∀ {A : Set} {n} → Tuple n A → ℕ
 tuple-size {n = n} = size (fold-able (tuple-spread-able n))
 
-tuple-size-prop : ∀ {a} {A : Set a} {n} → (e : Tuple n A) → tuple-size {n = n} e ≡ suc n
+tuple-size-prop : ∀ {A : Set} {n} → (e : Tuple n A) → tuple-size {n = n} e ≡ suc n
 tuple-size-prop {n = zero} _ = refl
 tuple-size-prop {n = suc _} = (cong suc) ∘ tuple-size-prop ∘ proj₂
 
-tuple-flatten : ∀ {a} {A : Set a} {n} → Tuple n A → Listₗ A
+tuple-flatten : ∀ {A : Set} {n} → Tuple n A → Listₗ A
 tuple-flatten {n = n} = flatten (fold-able (tuple-spread-able n))
 
-tuple-show : ∀ {a} {A : Set a} {n} → (A → String) → Tuple n A → String
+tuple-show : ∀ {A : Set} {n} → (A → String) → Tuple n A → String
 tuple-show {n = n} = show (fold-able (tuple-spread-able n))
 
-tuple-∈ : ∀ {a} {A : Set a} {n} → A → Tuple n A → Set a
+tuple-∈ : ∀ {A : Set} {n} → A → Tuple n A → Set
 tuple-∈ {n = n} = _∈_ (any-all-able (tuple-spread-able n))
 
-tuple-empty : ∀ {a} {A : Set a} {n} → Tuple n A → Set a
+tuple-empty : ∀ {A : Set} {n} → Tuple n A → Set
 tuple-empty {n = n} = empty (any-all-able (tuple-spread-able n))
