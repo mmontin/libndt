@@ -3,7 +3,6 @@ module GNDT where
 open import Dependencies.Imports
 open import SpreadAble
 
-
 -- Pattern functors
 
 data Sig a : Set (lsuc a) where
