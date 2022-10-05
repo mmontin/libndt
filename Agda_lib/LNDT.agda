@@ -1,30 +1,25 @@
 module LNDT where
 
 open import Dependencies.Imports
+open import GNDT
 open import SpreadAble
 
 -- The specification for linked lndt
 
-rec : ∀ {a} (F : TT) (A : Set a) → ℕ → Set a
-rec F A zero = Lift _ ⊤
-rec F A (suc n) = A × rec F (F A) n
+Σ-LNDT : ∀ {a} → Sig a
+Σ-LNDT = `⊤ `⊎ (`A `× `X)
 
--- `rec` inherits whatever structure that `F` has
--- which is also true for ‵⊤` and which is preserved by product `×`.
--- THIS IS WHAT SpreadAble IS!
+LNDT : ∀ {a} (F : TT)(A : Set a) → Set a
+LNDT F A = GNDT Σ-LNDT F A
 
-record LNDT {a} (F : TT) (A : Set a) : Set a where
-  constructor [_]#_
-  field
-    -- The depth of an instance of LNDT
-    depth : ℕ
-    -- Values actually contained in the structure
-    values : rec F A depth
+nil : ∀ {a} {F : TT}{A : Set a} → LNDT F A
+nil = ctor (inj₁ (lift tt))
 
-open LNDT public
+cons : ∀ {a} {F : TT}{A : Set a} → A → LNDT F (F A) → LNDT F A
+cons a xs = ctor (inj₂ (a , xs))
 
-pattern [] = [ 0 ]# (lift tt)
-pattern _∷_ a xs = [ suc _ ]# (a , xs)
+pattern [] = ctor (inj₁ (lift tt))
+pattern _∷_ a xs = ctor (inj₂ (a , xs))
 
 infixr 3 _∷_
 
@@ -42,8 +37,13 @@ lndt-ind : ∀
   (P[] : ∀ {a} {A : Set a} → P {A = A} [])
   (f   : ∀ {a} {A : Set a} (x : A) {l} → P l → P (cons x l))
   {a} {A : Set a} (x : LNDT F A) → P x
-lndt-ind P P[] f [] = P[]
-lndt-ind P P[] f (a ∷ vs) = f a (lndt-ind P P[] f ([ _ ]# vs))
+
+lndt-ind {F} P P[] f x = gndt-ind {Σ = Σ-LNDT} P (λ { (inj₁ (lift tt)) (lift tt) → P[]
+                                                    ; (inj₂ (a , x)) (lift tt , px) → f a px }) x
+
+-- The depth of an instance of LNDT
+depth : ∀ {a} {F : TT} {A : Set a} → LNDT F A → ℕ
+depth = lndt-ind _ 0 (λ _ → suc)
 
 -- All spread-able elements can indeed be spread from F to LNDT F
 
