@@ -86,3 +86,23 @@ Record SpreadAble (F : TT) : Type := mkSpread
     any_all_able : AnyAllAble F ;
     eq_able      : EqAble F ;
   }.
+  
+  (** For random generation and property based testing*)
+
+From QuickChick Require Import QuickChick Tactics.
+
+Module DoNotation.
+Notation "'do!' X <- A ; B" :=
+  (bindGen A (fun X => B))
+    (at level 200, X ident, A at level 100, B at level 200).
+End DoNotation.
+
+Import DoNotation.
+
+Definition Gensized (F : TT)  : Type := forall ( A : Type ), (nat -> G A) ->  nat -> G (F A).
+
+Open Scope string.
+
+Definition Printable (F : TT) := forall ( A : Type ), `(Show A)  ->  `(Show (F A)) .
+
+Close Scope string.
