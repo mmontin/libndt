@@ -279,3 +279,39 @@ Definition size_lndt {F : TT} (sp : SpreadAble F) A : LNDT F A -> nat :=
  
 Eval compute in (size_lndt (tuple_spreadable 2) _ nested3).
 (* = 13 : nat *)
+
+(* Random generation / PBT *)
+
+From QuickChick Require Import QuickChick Tactics.
+
+Module DoNotation.
+Notation "'do!' X <- A ; B" :=
+  (bindGen A (fun X => B))
+    (at level 200, X ident, A at level 100, B at level 200).
+End DoNotation.
+
+Import DoNotation.
+
+Fixpoint lndt_gen_sized {F : TT} (gen_F : Gensized F )
+ ( A : Type) (g: nat -> G A) (size : nat) : G (LNDT F A):=
+match size with
+| 0 => returnGen (empty F _)
+| S size' => 
+ freq_ (returnGen (empty F _ ))
+  ((1,returnGen (empty F _)) ::
+   (1,do! p0 <- g size' ;
+      do! p1 <- lndt_gen_sized gen_F (F A) (gen_F _  g) size';
+      returnGen (node _ _ p0 p1)):: nil)
+ end.
+ 
+ 
+Open Scope string.
+
+
+Fixpoint lndt_print {F : TT} {show_F : Printable F}
+{ A : Type} `{sh : Show A} ( t : LNDT F A):=
+  match t with
+    | empty _ _ => "empty"
+    | node _ _ x e => "(" ++ show x ++ ", " ++ (@lndt_print F show_F (F A) (show_F A sh)  e) ++ ")"
+  end.
+
