@@ -301,7 +301,7 @@ match size with
   ((1,returnGen (empty F _)) ::
    (1,do! p0 <- g size' ;
       do! p1 <- lndt_gen_sized gen_F (F A) (gen_F _  g) size';
-      returnGen (node _ _ p0 p1)):: nil)
+      returnGen (nest _ _ p0 p1)):: nil)
  end.
  
  
@@ -312,6 +312,6 @@ Fixpoint lndt_print {F : TT} {show_F : Printable F}
 { A : Type} `{sh : Show A} ( t : LNDT F A):=
   match t with
     | empty _ _ => "empty"
-    | node _ _ x e => "(" ++ show x ++ ", " ++ (@lndt_print F show_F (F A) (show_F A sh)  e) ++ ")"
+    | nest _ _ x e => "(" ++ show x ++ ", " ++ (@lndt_print F show_F (F A) (show_F A sh)  e) ++ ")"
   end.
 
