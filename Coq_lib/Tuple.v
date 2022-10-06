@@ -222,3 +222,32 @@ foldr F f A _ (fun x => fun _ => x + 1) 0.
 
 Eval compute in (size_regular (Tuple 2) (tuple_foldable _ )) example3.
 (* = 3 : nat *)
+
+From QuickChick Require Import QuickChick Tactics.
+
+Module DoNotation.
+Notation "'do!' X <- A ; B" :=
+  (bindGen A (fun X => B))
+    (at level 200, X ident, A at level 100, B at level 200).
+End DoNotation.
+
+Import DoNotation.
+
+ 
+Fixpoint tuple_gensized (n : nat) : Gensized (Tuple n) :=
+ match n with
+  | 0   => fun A g size => do! v <- g size ; returnGen v
+  | S p => fun A g size => 
+         do! v <- g size ; 
+         do! t <- tuple_gensized p _ g size; 
+         returnGen (v,t)
+         end.
+
+
+Definition example0Gensized := tuple_gensized 0 nat arbitrarySized 10.
+
+Sample example0Gensized. 
+
+Definition example3Gensized := tuple_gensized 3 nat arbitrarySized 10.
+
+Sample example3Gensized.
