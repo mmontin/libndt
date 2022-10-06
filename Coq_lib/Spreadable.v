@@ -22,6 +22,9 @@ Record MapAble (F : TT) : Type := mkMap
   { map        : Map F
   ; map_congru : MapCongruence  map
   ; map_compo  : MapComposition map }.
+  
+Definition MapId {F : TT} (map : Map F) : Type :=
+forall (A : Type) (f : A -> A) (x : F A), (forall x, f x = x) -> map A A f x = x.
 
 (** ** Foldable type constructors *)
 Definition Fold (F : TT) : Type :=
