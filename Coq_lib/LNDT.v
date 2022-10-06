@@ -106,6 +106,17 @@ Definition ff (n : nat) := match n with
 | _ => true
 end.
 
+Lemma map_lndt_id : forall {F : TT} (map : Map F) (p : MapId map), MapId(lndt_map map).
+Proof.
+unfold MapId, Map. intros.  
+generalize dependent f. revert x.
+induction x; simpl; intros; auto.
+rewrite H. rewrite IHx with (f := map A A f).
++ reflexivity.
++ intros. rewrite p. reflexivity. exact H.
+Qed.
+
+
 (** ** Congruence function *)
 Require Import FunInd.
 Functional Scheme lndt_map_ind := Induction for lndt_map Sort Prop.
